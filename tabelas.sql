@@ -230,10 +230,9 @@ insert into pacientes(nome, email, cpf, data_nascimento) values
 
 
 insert into consultas(medico_id, paciente_id) values
-(7, 1),
-(8, 2),
-(9, 2),
-(9, 3)
+(1, 1),
+(2, 2),
+(3, 3)
 
 
 insert into exames_consulta(consulta_id, nome_exame, valor_exame) values
@@ -244,8 +243,9 @@ insert into exames_consulta(consulta_id, nome_exame, valor_exame) values
 
 
 -- q1
+create view vw_medico_c as
 select 
-medicos.nome,
+medicos.nome as medicos,
 medicos.crm,
 medicos.valor_consulta,
 especialidades.nome
@@ -326,3 +326,73 @@ WHERE
 consultas.status = 'Realizada'
 GROUP BY especialidades.nome
 ORDER BY total_faturado DESC;
+
+
+
+
+------------------------------------------------------------------------------------
+Autofix
+
+create table clientes(
+id serial primary key,
+nome varchar(100) not null,
+email varchar(150) unique not null,
+telefone varchar(14) unique not null,
+cpf VARCHAR (11) unique not null,
+data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+
+
+create table mecanicos(
+id serial primary key,
+nome varchar(150) not null,
+especialidade varchar(150) not null,
+valor_hora timestamp default CURRENT_TIMESTAMP
+)
+
+
+create table veiculos(
+id serial primary key,
+cliente_id int not null,
+placa varchar(7) unique not null,
+modelo varchar(100) not null,
+marca varchar(100) not null,
+ano date default CURRENT_DATE
+) 
+
+
+
+create table ordens_servico(
+id serial primary key,
+veiculo_id int not null,
+mecanico_id int not null,
+data_abertura TIMESTAMP default current_timestamp,
+valor_mao_obra NUMERIC(10,2) check(valor_mao_obra >= 0) not null,
+status varchar(25) default 'Em aberto' check(status in ('Agendada', 'Realizada', 'Cancelada')),
+
+
+constraint veiculo
+FOREIGN key (veiculo_id)
+REFERENCES veiculos(id)
+on delete cascade,
+
+constraint mecanico
+foreign key (mecanico_id)
+REFERENCES mecanicos(id)
+on delete cascade
+) 
+
+
+create table peca_os(
+id serial primary key,
+os_id int not null,
+nome_peca varchar(150) not null,
+quantidade int not null,
+
+constraint peca_os
+foreign key (os_id)
+REFERENCES ordens_servico(id)
+on delete cascade
+)
+
+

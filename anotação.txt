@@ -9,7 +9,7 @@ default  = vc seleciona o que vai estar de padrão para a seu id/variavel/tabela
 --references()  = a tabela que vc vai linkar o id
 
 
-on delete restrict  = se eu apagar um produto ele apaga apenas o produto, não a categoria
+on delete restrict  = não da para apagar o item, se tentar ele fala que não é possivel
 on delete cascade  = se eu apagar 1 apaga tudo linkado a ele
 
 
